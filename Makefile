@@ -19,6 +19,13 @@ ifeq ($(shell uname -s),Linux)
 	LIBS += -lrt
 endif
 
+ifeq ($(arm_neon),) # if arm_neon is not defined
+else				# if arm_neon is defined
+	INCLUDES+=-Isse2neon
+	CFLAGS+=-D_FILE_OFFSET_BITS=64 -mfpu=neon -fsigned-char
+endif	
+
+
 .SUFFIXES:.c .o .cc
 
 .c.o:
