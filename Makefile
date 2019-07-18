@@ -1,9 +1,9 @@
-CC=			gcc
+CC=			gcc 
 #CC=			clang --analyze
-CFLAGS=		-g -Wall -Wno-unused-function -O2
+CFLAGS=		-g -Wall -Wno-unused-function -O2 
 WRAP_MALLOC=-DUSE_MALLOC_WRAPPERS
 AR=			ar
-DFLAGS=		-DHAVE_PTHREAD $(WRAP_MALLOC)
+DFLAGS=		-DHAVE_PTHREAD $(WRAP_MALLOC)  -D_FILE_OFFSET_BITS=64
 LOBJS=		utils.o kthread.o kstring.o ksw.o bwt.o bntseq.o bwa.o bwamem.o bwamem_pair.o bwamem_extra.o malloc_wrap.o \
 			QSufSort.o bwt_gen.o rope.o rle.o is.o bwtindex.o
 AOBJS=		bwashm.o bwase.o bwaseqio.o bwtgap.o bwtaln.o bamlite.o \
@@ -17,6 +17,12 @@ SUBDIRS=	.
 
 ifeq ($(shell uname -s),Linux)
 	LIBS += -lrt
+endif
+
+ifeq ($(arm_neon),) # if arm_neon is not defined
+else				# if arm_neon is defined
+    INCLUDES+=-Isse2neon
+	CFLAGS+=-D_FILE_OFFSET_BITS=64 -mfpu=neon-vfpv4 -fsigned-char -funsafe-math-optimizations -flax-vector-conversions
 endif
 
 .SUFFIXES:.c .o .cc
