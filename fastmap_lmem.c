@@ -334,17 +334,17 @@ int main_mem(int argc, char *argv[])
 		for (i = 0; i < aux.idx->bns->n_seqs; ++i)
 			aux.idx->bns->anns[i].is_alt = 0;
 
-//For loop placed to test if multiple fq files are processed in the same go. grh_chunk, grh_ret, grh_fn are variables used for testing
-	int grh_chunk=0,grh_ret=0;
+/* Ram Prasad Mohanty: The following set of code is included to enable executing multple interleaved read sub-files from ramdisk and create a single output file. grh_chunk, grh_ret, grh_fn are variables used for testing*/
+	int grh_chunk=0,grh_ret=0,grh_iter;
 	FILE *fdram;
-	char sysRm[50];
+	char sysRm[50], grh_fn[50];
 	grh_chunk = atoi(argv[optind + 1]);
 	for (grh_iter=0;grh_iter<grh_chunk;grh_iter++)
 	{
 		sprintf(grh_fn,"/ramdisk/fqtest%d.fq",grh_iter);
 		strcpy(argv[optind + 1],grh_fn);
 		
-		fdram = fopen(argv[optind + 1], "rb");// LOADING THE READ FILE
+		fdram = fopen(argv[optind + 1], "rb");// LOADING THE Interleaved READ FILE
 		while(fdram == NULL) {
 		
 			sleep(2);
@@ -353,7 +353,7 @@ int main_mem(int argc, char *argv[])
 		}
 		
 		fclose(fdram); //if the file is existing and opened then close it before reopening.
-		ko = kopen(argv[optind + 1], &fd);// LOADING THE READ FILE after waiting
+		ko = kopen(argv[optind + 1], &fd);
 		if (ko == 0) {
 		if (bwa_verbose >= 1) fprintf(stderr, "[E::%s] fail to open file `%s'.\n", __func__, argv[optind + 1]);
 		return 1;
@@ -361,7 +361,7 @@ int main_mem(int argc, char *argv[])
 		
 
 		
-		fp = gzdopen(fd, "r");//LOADING THE READ FASTQ FILE
+		fp = gzdopen(fd, "r");//LOADING THE Interleaved READ FASTQ FILE
 
 		aux.ks = kseq_init(fp);
 		
