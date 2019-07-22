@@ -29,6 +29,7 @@
 // John W. Ratcliff : jratcliffscarab@gmail.com
 // Brandon Rowlett : browlett@nvidia.com
 // Ken Fast : kfast@gdeb.com
+// Ram Prasad Mohanty : ramprasadmohanty@gmail.com
 //
 //
 /*
@@ -55,11 +56,17 @@
 #define GCC 1
 #define ENABLE_CPP_VERSION 0
 
-#if GCC
-#define FORCE_INLINE					inline __attribute__((always_inline))
+#if defined(__GNUC__) || defined(__clang__)
+# pragma push_macro("FORCE_INLINE")
+# pragma push_macro("ALIGN_STRUCT")
+# define FORCE_INLINE       static inline __attribute__((always_inline))
+# define ALIGN_STRUCT(x)    __attribute__((aligned(x)))
 #else
-#define FORCE_INLINE					inline
+# error "Macro name collisions may happens with unknown compiler"
+# define FORCE_INLINE       static inline
+# define ALIGN_STRUCT(x)    __declspec(align(x))
 #endif
+
 
 #include <arm_neon.h>
 
