@@ -31,7 +31,6 @@
 // Ken Fast : kfast@gdeb.com
 // Ram Prasad Mohanty : ramprasadmohanty@gmail.com
 //
-//
 /*
 ** The MIT license:
 **
